@@ -1,70 +1,117 @@
-# Getting Started with Create React App
+# SkillSnap - Advanced Technical Skills Assessment Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+SkillSnap is a modern, full-stack assessment platform designed to validate technical skills through interactive coding challenges and quizzes. It features real-time code execution, secure authentication, and verifiable certification.
 
-## Available Scripts
+![SkillSnap Banner](https://via.placeholder.com/1200x400?text=SkillSnap+Assessment+Platform)
 
-In the project directory, you can run:
+## 🚀 Key Features
 
-### `npm start`
+*   **Multi-Language Code Execution**: safely execute user code (JavaScript, Python) against hidden test cases using **Judge0**.
+*   **Diverse Learning Paths**: Structured assessments for **JavaScript, Python, React, Node.js, and SQL**.
+*   **Secure Authentication**: Firebase Authentication integration for secure Signup/Login and session management.
+*   **Real-Time Assessment Engine**:
+    *   Timed assessments with auto-submit.
+    *   Split-screen interface (Problem vs. Code Editor).
+    *   Console output streaming.
+*   **Verifiable Certificates**: Dynamic certificate generation with unique verification IDs.
+*   **Modern UI/UX**: Built with React, Tailwind CSS, Framer Motion, and Lucide Icons for a premium dark/light mode experience.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🏗️ Technical Architecture
 
-### `npm test`
+SkillSnap follows a **Service-Oriented Architecture (SOA)** with a clear separation between the frontend client, backend API, and execution sandbox.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 1. Frontend Client
+*   **Framework**: React (Vite/CRA)
+*   **State Management**: Context API (`AuthContext`, `AssessmentContext`)
+*   **Styling**: Tailwind CSS v3, `clsx`, `tailwind-merge`
+*   **Routing**: React Router v6
 
-### `npm run build`
+### 2. Backend API (Node.js/Express)
+*   **Role**: Orchestrates data flow between Client and Database.
+*   **Database**: **Google Cloud Firestore** (NoSQL) for flexible schema design (Skills, Assessments, Users).
+*   **Security**: Middleware verifies Firebase Auth tokens.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 3. Code Execution Sandbox (Judge0)
+*   **Role**: Safely runs untrusted user code in isolated Docker containers.
+*   **Security**: Prevents malicious code from impacting the host server.
+*   **Integration**: Backend pushes code + test cases -> Judge0 -> Returns `stdout`/`stderr` or `Verdict`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 4. Database Schema (Firestore)
+*   **`users`**: User profiles and assessment history.
+*   **`skills`**: Metadata for available skills (e.g., JS, Python).
+*   **`assessments`**: Question banks (MCQ + Code problems).
+*   **`problems`**: Hidden test cases for coding challenges (strictly backend-only).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 🛠️ Technology Stack
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Frontend** | React.js | UI Library |
+| | Tailwind CSS | Utility-first CSS framework |
+| | Monaco Editor | VS Code-like editor implementation |
+| | Axios | HTTP Client |
+| **Backend** | Node.js + Express | API Server |
+| **Database** | Firestore | NoSQL Cloud Database |
+| **Auth** | Firebase Auth | Identity Provider |
+| **Execution** | Judge0 (Docker) | Sandboxed Code Runner |
+| **DevOps** | Docker | Containerization |
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📦 Installation & Setup
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Prerequisites
+*   Node.js v16+
+*   Docker (for local Judge0 instance)
+*   Firebase Project (Credentials)
 
-## Learn More
+### 1. Frontend Setup
+```bash
+# Clone repository
+git clone https://github.com/OmAnand857/SkillSnap-frontend.git
+cd skillsnap-frontend
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Install Dependencies
+npm install
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Start Development Server
+npm start
+```
 
-### Code Splitting
+### 2. Backend Setup
+(Assuming backend is in a parallel directory)
+```bash
+cd ../skillsnap-backend
+npm install
+# Add serviceAccountKey.json for Firebase Admin
+node server.js
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 3. Database Seeding
+The project includes an automated script to populate Firestore with initial skills and questions.
+See `db_seed.md` for the script and instructions.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🔒 Security & Code execution
 
-### Making a Progressive Web App
+### How Safe Execution Works
+1.  User submits code via Fronted.
+2.  Backend appends **Hidden Test Cases** from Firestore (never exposed to client).
+3.  Combined payload is sent to **Judge0** container.
+4.  Judge0 runs code in a restricted sandbox (limits memory, CPU, networking).
+5.  Results are compared against expected execution outputs.
+6.  Only the final `Passed/Failed` verdict and public console log is returned to the user.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🤝 Contributing
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
