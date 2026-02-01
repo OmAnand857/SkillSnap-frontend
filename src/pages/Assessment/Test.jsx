@@ -24,7 +24,7 @@ const Test = () => {
         isExecuting
     } = useAssessment();
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [languageId, setLanguageId] = useState(63); // Default JS
+    const [languageId, setLanguageId] = useState(112); // Default JS
     const [activeTab, setActiveTab] = useState('description'); // description, constraints
 
     useEffect(() => {

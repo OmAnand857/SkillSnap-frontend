@@ -14,6 +14,8 @@ export const AssessmentProvider = ({ children }) => {
     const [isExecuting, setIsExecuting] = useState(false);
     const [error, setError] = useState(null);
 
+    const [submissionResult, setSubmissionResult] = useState(null);
+
     const startAssessment = async (skillId) => {
         try {
             setStatus('loading');
@@ -31,6 +33,7 @@ export const AssessmentProvider = ({ children }) => {
             setTimeLeft(assessment.timeLimit || 1800);
             setStatus('in-progress');
             setExecutionResult(null);
+            setSubmissionResult(null);
         } catch (err) {
             console.error("Failed to start assessment", err);
             setError(err.message);
@@ -90,7 +93,8 @@ export const AssessmentProvider = ({ children }) => {
         if (!activeAssessment) return;
         try {
             setStatus('submitting');
-            await assessmentService.submitAssessment(activeAssessment.id, answers);
+            const result = await assessmentService.submitAssessment(activeAssessment.id, answers);
+            setSubmissionResult(result);
             setStatus('completed');
         } catch (err) {
             console.error("Failed to submit assessment", err);
@@ -114,7 +118,8 @@ export const AssessmentProvider = ({ children }) => {
             executionResult,
             setExecutionResult,
             isExecuting,
-            error
+            error,
+            submissionResult
         }}>
             {children}
         </AssessmentContext.Provider>
