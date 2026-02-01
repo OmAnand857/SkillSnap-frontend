@@ -24,16 +24,19 @@ const Login = () => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            if (formData.email && formData.password) {
-                login({ id: 1, name: 'Demo User', email: formData.email });
-                navigate('/dashboard');
-            } else {
+        try {
+            if (!formData.email || !formData.password) {
                 setError('Please enter both email and password.');
                 setIsLoading(false);
+                return;
             }
-        }, 1000);
+            await login({ email: formData.email, password: formData.password });
+            navigate('/dashboard');
+        } catch (err) {
+            console.error(err);
+            setError(err.message || 'Login failed. Please check your credentials.');
+            setIsLoading(false);
+        }
     };
 
     return (

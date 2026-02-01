@@ -7,7 +7,7 @@ import Button from '../../components/common/Button';
 
 const Signup = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, signup } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -32,11 +32,16 @@ const Signup = () => {
             return;
         }
 
-        // Simulate API call
-        setTimeout(() => {
-            login({ id: 1, name: formData.name, email: formData.email });
+        try {
+            await signup({ email: formData.email, password: formData.password, displayName: formData.name });
+            // Auto login after signup as per API spec (signup doesn't return token)
+            await login({ email: formData.email, password: formData.password });
             navigate('/dashboard');
-        }, 1000);
+        } catch (err) {
+            console.error(err);
+            setError(err.message || 'Failed to create account. Please try again.');
+            setIsLoading(false);
+        }
     };
 
     return (
